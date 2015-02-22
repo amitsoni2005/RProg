@@ -2,44 +2,52 @@
 #makeCacheMatrix creates a special "matrix", which is really a list containing a function to
 #set the value of the Matrix
 #get the value of the Matrix
-#cacheInverse the value cacheInverse
+#cacheInverse the value cacheInverseMatrix
 #getCacheInverse the value of the mean
 makeCacheMatrix <- function(x = numeric()) {
 		# intialize to null
-        cacheInverse <- NULL
+        cacheInverseMatrix <- NULL
 
         # Set the matrix to the passed value
-        setMatrix <- function(y) {
-                x <<- y
-                #need to reset the cacheInverse to NULL because tis is a new matrix
-                cacheInverse <<- NULL
+        setMatrix <- function(matrix) {
+                x <<- matrix
+                #need to reset the cacheInverseMatrix to NULL because tis is a new matrix
+                cacheInverseMatrix <<- NULL
         }
 
         # return the matrix already stored.
         getMatrix <- function() x
 
         # Store the passed cache value passed.
-        cacheInverse <- function(cacheSolve) cacheInverse <<- cacheSolve
+        cacheInverse <- function(cacheSolve) cacheInverseMatrix <<- cacheSolve
 
-        # compute the inverse and store it in cacheInverse.
-        getCacheInverse <- function() cacheInverse
+        # compute the inverse and store it in cacheInverseMatrix.
+        getCacheInverse <- function() cacheInverseMatrix
 
         # return the references to the functions.
-        list(setMatrix = setMatrix, getMatrix = getMatrix,
+        list(setMatrix = setMatrix, 
+        	 getMatrix = getMatrix,
              cacheInverse = cacheInverse,
              getCacheInverse = getCacheInverse)
 }
 
 #cacheSolve: This function computes the inverse of the special "matrix" returned by makeCacheMatrix above. If the inverse has already been 
 #calculated (and the matrix has not changed), then the cachesolve should retrieve the inverse from the cache.
-cacheSolve <- function(x, ...) {
-        m <- x$getmean()
-        if(!is.null(m)) {
-                message("getting cached data")
-                return(m)
+cacheSolve <- function(matrix, ...) {
+		#get the cached inverse value
+        cacheInverseMatrix <- matrix$getCacheInverse()
+
+        #if the value is already cached no need to compute return that value
+        if(!is.null(cacheInverseMatrix)) {
+                return(cacheInverseMatrix)
         }
-        data <- x$get()
-        m <- mean(data, ...)
-        x$setmean(m)
-        m
+        #compute the inverse cacheInverseMatrix is null
+        data <- matrix$getMatrix()
+        # compute the inverse
+        cacheInverseMatrix <- solve(data)
+        # cache the inverse
+        matrix$cacheInverse(cacheInverseMatrix)
+
+       	#return the cache Inverse Matrix
+        cacheInverseMatrix
 }
