@@ -3,7 +3,7 @@
 #set the value of the Matrix
 #get the value of the Matrix
 #cacheInverse the value cacheInverseMatrix
-#getCacheInverse the value of the mean
+#getCacheInverse the value of the inverse stored in cache.
 makeCacheMatrix <- function(x = numeric()) {
 		# intialize to null
         cacheInverseMatrix <- NULL
@@ -11,14 +11,14 @@ makeCacheMatrix <- function(x = numeric()) {
         # Set the matrix to the passed value
         setMatrix <- function(matrix) {
                 x <<- matrix
-                #need to reset the cacheInverseMatrix to NULL because tis is a new matrix
+                #need to reset the cacheInverseMatrix to NULL because this is a new matrix
                 cacheInverseMatrix <<- NULL
         }
 
         # return the matrix already stored.
         getMatrix <- function() x
 
-        # Store the passed cache value passed.
+        # Store the passed cache value.
         cacheInverse <- function(cacheSolve) cacheInverseMatrix <<- cacheSolve
 
         # compute the inverse and store it in cacheInverseMatrix.
@@ -35,19 +35,19 @@ makeCacheMatrix <- function(x = numeric()) {
 #calculated (and the matrix has not changed), then the cachesolve should retrieve the inverse from the cache.
 cacheSolve <- function(matrix, ...) {
 		#get the cached inverse value
-        cacheInverseMatrix <- matrix$getCacheInverse()
+        cacheInv<- matrix$getCacheInverse()
 
         #if the value is already cached no need to compute return that value
-        if(!is.null(cacheInverseMatrix)) {
-                return(cacheInverseMatrix)
+        if(!is.null(cacheInv)) {
+                return(cacheInv)
         }
-        #compute the inverse cacheInverseMatrix is null
+        #compute the inverse cacheInv is null
         data <- matrix$getMatrix()
         # compute the inverse
-        cacheInverseMatrix <- solve(data)
+        cacheInv <- solve(data)
         # cache the inverse
-        matrix$cacheInverse(cacheInverseMatrix)
+        matrix$cacheInverse(cacheInv)
 
        	#return the cache Inverse Matrix
-        cacheInverseMatrix
+        cacheInv
 }
